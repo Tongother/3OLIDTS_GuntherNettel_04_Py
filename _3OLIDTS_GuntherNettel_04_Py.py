@@ -1,6 +1,10 @@
-# -*- coding: utf-8 -*-
+# -- coding: utf-8 --import tkinter as tk
+# No se si vea que se copio y pego, pero, lo copie todo debido a que este documento lo trabaje desde mi computadora de escritorio
+#.-
+
 import tkinter as tk
 from tkinter import messagebox
+import re
 
 def limpiar_campos():
     entry_nombres.delete(0, tk.END)
@@ -9,6 +13,26 @@ def limpiar_campos():
     entry_estatura.delete(0, tk.END)
     entry_telefono.delete(0, tk.END)
     var_genero.set(0)
+    
+def es_entero_valido(valor):
+    try:
+        int(valor)
+        return True;
+    except ValueError:
+        return False;
+
+def es_decimal_valido(valor):
+    try:
+        float(valor)
+        return True;
+    except ValueError:
+        return False;
+
+def es_entero_valido_de_10_digitos(valor):
+    return valor.isdigit and len(valor) == 10
+
+def es_texto_valido(valor):
+    return bool(re.match("^[a-zA-Z\s]+$", valor))
 
 def guardar_datos():
     #Obtener los datos de los campos
@@ -23,17 +47,21 @@ def guardar_datos():
         genero = "Hombre"
     elif var_genero.get() == 2:
         genero = "Mujer"
+    
+    if (es_entero_valido(edad) and es_decimal_valido(estatura) and es_entero_valido_de_10_digitos(telefono) and es_texto_valido(nombres) and es_texto_valido(nombres)):
+        #Crear una cadena con los datos
+        datos = f"Nombres: {nombres}\nApellidos: {apellidos}\nEdad: {edad}\nGenero: {genero}\nEstatura: {estatura}\nTelefono: {telefono}"
         
-    #Crear una cadena con los datos
-    datos = f"Nombres: {nombres}\nApellidos: {apellidos}\nEdad: {edad}\nGenero: {genero}\nEstatura: {estatura}\nTelefono: {telefono}"
+        # Guardar los datos en un archivo de texto
+        with open("C:/Users/nette/OneDrive/Documentos/Archivos txt/Datospy.txt", "a") as archivo:
+          archivo.write(datos + "\n\n")
         
-    # Guardar los datos en un archivo de texto
-    with open("C:/Users/nette/OneDrive/Documentos/Archivos txt/Datospy.txt", "a") as archivo:
-        archivo.write(datos + "\n\n")
-        
-    # Mostrar un mensaje con los datos capturados
-    messagebox.showinfo("Informacion", "Datos guardados con exito:\n\n" + datos)
-    limpiar_campos()
+        # Mostrar un mensaje con los datos capturados
+        messagebox.showinfo("Informacion", "Datos guardados con exito:\n\n" + datos)
+        limpiar_campos()
+    else:
+        messagebox.showerror("Error", "Por favor, ingrese datos validos en los campos.")
+        limpiar_campos()
 
 #Crear la ventana principal
 ventana = tk.Tk()
